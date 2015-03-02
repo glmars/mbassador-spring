@@ -1,5 +1,6 @@
 # idea project settings #
 *.iml
+.idea/
 
 # Package Files #
 *.war
@@ -8,4 +9,4 @@
 
 
 # root of compiled classes #
-target/**/*
+target/
