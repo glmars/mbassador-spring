@@ -1,5 +1,6 @@
 package org.mbassy.test;
 
+import org.junit.Test;
 import org.mbassy.spring.Transaction;
 import org.mbassy.test.scenario.BaseTest;
 
@@ -12,6 +13,7 @@ import org.mbassy.test.scenario.BaseTest;
 public class Example extends BaseTest {
 
 
+	@Test
     public void postMessageConditionally() {
 
         // post the object only if a transaction exists and completes with rollback

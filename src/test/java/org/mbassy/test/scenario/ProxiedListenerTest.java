@@ -3,7 +3,7 @@ package org.mbassy.test.scenario;
 import org.junit.Test;
 import org.mbassy.test.listeners.ProxiedListener;
 import org.mbassy.test.messages.ListenerTrackingMessage;
-import org.mbassy.test.scenario.BaseTest;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -21,7 +21,7 @@ public class ProxiedListenerTest extends BaseTest{
     @Test
     public void testProxied(){
         bus.subscribe(listener);
-        boolean isProxy = listener.getClass().getCanonicalName().indexOf("CGLIB") > -1;
+        boolean isProxy = AopUtils.isCglibProxy( listener );
         assertTrue(isProxy);
         ListenerTrackingMessage message = new ListenerTrackingMessage();
         assertFalse(message.isReceiver(listener.getUuid()));
