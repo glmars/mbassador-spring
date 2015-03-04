@@ -25,7 +25,7 @@
         <dependency>
             <groupId>net.engio</groupId>
             <artifactId>mbassador</artifactId>
-            <version>1.2.1</version>
+            <version>1.2.1.e1</version>
         </dependency>
 
         <dependency>

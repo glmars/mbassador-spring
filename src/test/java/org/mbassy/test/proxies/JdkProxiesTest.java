@@ -54,7 +54,7 @@ public class JdkProxiesTest extends AbstractProxiesTest
 	}
 
 	@Test
-	public void defaultBusDoesNotSupportJdkProxies() {
+	public void defaultBusSupportsJdkProxies() {
 		TransactionAwareMessageBus<ListenerTrackingMessage> bus = new TransactionAwareMessageBus<ListenerTrackingMessage>();
 
 		// Subscribe all event listeners
@@ -69,20 +69,31 @@ public class JdkProxiesTest extends AbstractProxiesTest
 
 		bus.publish( message );
 
-		assertFalse( message.isReceiver( ServiceWithCacheableHandlerImpl.class ) );
-		assertFalse( message.isReceiver( ServiceWithCacheableHandlerImplCacheableOnHandler.class ) );
-		assertFalse( message.isReceiver( ServiceWithCacheableMethodImpl.class ) );
-		assertFalse( message.isReceiver( ServiceWithCacheableMethodImplCacheableOnHandler.class ) );
-		assertFalse( message.isReceiver( ServiceWithHandlerImplCacheableOnHandler.class ) );
-		assertFalse( message.isReceiver( ServiceWithHandlerImplCacheableOnMethod.class ) );
-		assertFalse( message.isReceiver( ServiceWithoutCacheableImplCacheableOnHandler.class ) );
-		assertFalse( message.isReceiver( ServiceWithoutCacheableImplCacheableOnMethod.class ) );
-
+		assertEquals(
+			"no - ServiceWithCacheableHandlerImpl\r" +
+			"no - ServiceWithCacheableHandlerImplCacheableOnHandler\r" +
+			"yes - ServiceWithCacheableMethodImpl\r" +
+			"yes - ServiceWithCacheableMethodImplCacheableOnHandler\r" +
+			"no - ServiceWithHandlerImplCacheableOnHandler\r" +
+			"yes - ServiceWithHandlerImplCacheableOnMethod\r" +
+			"yes - ServiceWithoutCacheableImplCacheableOnHandler\r" +
+			"yes - ServiceWithoutCacheableImplCacheableOnMethod\r",
+			receiversStatus(
+				ServiceWithCacheableHandlerImpl.class,
+				ServiceWithCacheableHandlerImplCacheableOnHandler.class,
+				ServiceWithCacheableMethodImpl.class,
+				// Next one is not cached because the Cacheable is not on the interface
+				ServiceWithCacheableMethodImplCacheableOnHandler.class,
+				ServiceWithHandlerImplCacheableOnHandler.class,
+				ServiceWithHandlerImplCacheableOnMethod.class,
+				ServiceWithoutCacheableImplCacheableOnHandler.class,
+				ServiceWithoutCacheableImplCacheableOnMethod.class));
+		
 		// Verify cache intercepts
-		verify( testCache, never() ).get( "ServiceWithCacheableHandler" );
-		verify( testCache, never() ).get( "ServiceWithCacheableHandlerImplCacheableOnHandler" );
+		verify( testCache, atLeastOnce() ).get( "ServiceWithCacheableHandler" );
+		verify( testCache, atLeastOnce() ).get( "ServiceWithCacheableHandlerImplCacheableOnHandler" );
 		verify( testCache, never() ).get( "ServiceWithCacheableMethodImplCacheableOnHandler" );
-		verify( testCache, never() ).get( "ServiceWithHandlerImplCacheableOnHandler" );
+		verify( testCache, atLeastOnce() ).get( "ServiceWithHandlerImplCacheableOnHandler" );
 		verify( testCache, never() ).get( "ServiceWithoutCacheableImplCacheableOnHandler" );
 	}
 

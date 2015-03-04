@@ -4,6 +4,8 @@ import net.engio.mbassy.bus.BusRuntime;
 import net.engio.mbassy.bus.IMessagePublication;
 import net.engio.mbassy.bus.MBassador;
 import net.engio.mbassy.bus.common.IMessageBus;
+import net.engio.mbassy.bus.config.BusConfiguration;
+import net.engio.mbassy.bus.config.Feature;
 import net.engio.mbassy.bus.config.IBusConfiguration;
 import net.engio.mbassy.bus.error.IPublicationErrorHandler;
 import org.springframework.transaction.support.TransactionSynchronization;
@@ -21,11 +23,15 @@ public class TransactionAwareMessageBus<T> implements IMessageBus<T, ITransactio
     private MBassador<T> internalBus;
 
     public TransactionAwareMessageBus(IBusConfiguration configuration){
+		// configure the pub sub feature
+		Feature.SyncPubSub pubSubFeature = configuration.getFeature(Feature.SyncPubSub.class);
+		pubSubFeature.setSubscriptionManagerProvider(new SpringSubscriptionManagerProvider());
+		
         internalBus = new MBassador<T>(configuration);
     }
 
     public TransactionAwareMessageBus(){
-        internalBus = new MBassador<T>();
+        this(DefaultBusConfiguration());
     }
 
 
@@ -193,4 +199,11 @@ public class TransactionAwareMessageBus<T> implements IMessageBus<T, ITransactio
     }
 
 
+	static private IBusConfiguration DefaultBusConfiguration() {
+		// copy & paste from MBassador() default constructor
+		return new BusConfiguration()
+			.addFeature(Feature.SyncPubSub.Default())
+			.addFeature(Feature.AsynchronousHandlerInvocation.Default())
+			.addFeature(Feature.AsynchronousMessageDispatch.Default());
+	}
 }

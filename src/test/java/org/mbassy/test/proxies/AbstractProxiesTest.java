@@ -11,7 +11,9 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.cache.support.SimpleValueWrapper;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -21,9 +23,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = AbstractProxiesTest.Config.class)
@@ -92,6 +92,22 @@ public abstract class AbstractProxiesTest
 		assertTrue( AopUtils.isAopProxy( bean ) );
 		assertFalse( AopUtils.isJdkDynamicProxy( bean ) );
 		assertTrue( AopUtils.isCglibProxy( bean ) );
+	}
+	
+	protected String receiversStatus(Class<?>... receiverClasses) {
+		StringBuilder builder = new StringBuilder();
+
+		for (Class<?> receiverClass : receiverClasses) {
+			String status = message.isReceiver( receiverClass ) ? "yes" : "no";
+			String name = receiverClass.getSimpleName();
+
+			builder.append( status );
+			builder.append( " - " );
+			builder.append( name );
+			builder.append( '\r' );
+		}
+
+		return builder.toString();
 	}
 
 	@Configuration
