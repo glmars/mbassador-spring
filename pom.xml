@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mbassy</groupId>
     <artifactId>mbassador-spring</artifactId>
-    <version>1.2.1.e1-SNAPSHOT</version>
+    <version>1.2.1.e1</version>
     <packaging>jar</packaging>
     <name>mbassador-spring</name>
     <description>Module for integrating MBassador message bus in Spring environment.</description>
@@ -176,6 +176,33 @@
                 </configuration>
             </plugin>
 
+			<plugin>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.1</version>
+				<configuration>
+					<source>${project.build.java.version}</source>
+				</configuration>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
         </plugins>
     </build>
 </project>
